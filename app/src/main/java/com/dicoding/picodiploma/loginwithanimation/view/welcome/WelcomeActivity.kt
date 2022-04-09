@@ -1,14 +1,18 @@
 package com.dicoding.picodiploma.loginwithanimation.view.welcome
 
+import android.animation.AnimatorSet
+import android.animation.ObjectAnimator
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
+import android.view.View
 import android.view.WindowInsets
 import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
 import com.dicoding.picodiploma.loginwithanimation.databinding.ActivityWelcomeBinding
 import com.dicoding.picodiploma.loginwithanimation.view.login.LoginActivity
 import com.dicoding.picodiploma.loginwithanimation.view.signup.SignupActivity
+import kotlinx.coroutines.NonCancellable.start
 
 class WelcomeActivity : AppCompatActivity() {
     private lateinit var binding: ActivityWelcomeBinding
@@ -20,9 +24,10 @@ class WelcomeActivity : AppCompatActivity() {
 
         setupView()
         setupAction()
+        playanimation()
     }
 
-    private fun setupView() {
+    private fun setupAction() {
         @Suppress("DEPRECATION")
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             window.insetsController?.hide(WindowInsets.Type.statusBars())
@@ -35,7 +40,7 @@ class WelcomeActivity : AppCompatActivity() {
         supportActionBar?.hide()
     }
 
-    private fun setupAction() {
+    private fun setupView() {
         binding.loginButton.setOnClickListener {
             startActivity(Intent(this, LoginActivity::class.java))
         }
@@ -43,5 +48,31 @@ class WelcomeActivity : AppCompatActivity() {
         binding.signupButton.setOnClickListener {
             startActivity(Intent(this, SignupActivity::class.java))
         }
+    }
+
+    private fun playanimation() {
+        ObjectAnimator.ofFloat(binding.imageView, View.TRANSLATION_X, -30f, 30f).apply {
+            duration = 6000
+            repeatCount = ObjectAnimator.INFINITE
+            repeatMode = ObjectAnimator.REVERSE
+        }.start()
+
+        //menjalankan animasi untuk beberapa item dibawah gambar
+        val login = ObjectAnimator.ofFloat(binding.loginButton, View.ALPHA, 1f).setDuration(500)
+        val signup = ObjectAnimator.ofFloat(binding.signupButton, View.ALPHA, 1f).setDuration(500)
+        val title = ObjectAnimator.ofFloat(binding.titleTextView, View.ALPHA, 1f).setDuration(500)
+        val desc = ObjectAnimator.ofFloat(binding.descTextView, View.ALPHA, 1f).setDuration(500)
+
+        //untuk melakukan animasi secara bersamaan dapat menggunakan animator set dengan ketentuan together/bersama
+        val together = AnimatorSet().apply {
+            playTogether(login, signup)
+        }
+
+
+        AnimatorSet().apply {
+            playSequentially(title, desc, together)
+            start()
+        }
+
     }
 }
