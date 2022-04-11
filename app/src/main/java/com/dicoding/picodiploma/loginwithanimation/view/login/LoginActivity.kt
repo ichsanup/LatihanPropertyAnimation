@@ -106,7 +106,6 @@ class LoginActivity : AppCompatActivity() {
         }.start()
 
         //menjalankan animasi untuk beberapa item dibawah gambar
-        //menjalankan animasi untuk beberapa item dibawah gambar
         val titletextview =
             ObjectAnimator.ofFloat(binding.titleTextView, View.ALPHA, 1f).setDuration(500)
         val msgtext =
